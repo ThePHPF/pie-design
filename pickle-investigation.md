@@ -14,9 +14,6 @@ to replace PECL, started around 2014 time.
 
 ## Todo
 
-* Pickle licence is New BSD - is this compatible with PHP Licence? Adopting Pickle (or even taking parts of it) would
-  require licences to be compatible; also bear in mind if licences are NOT compatible, we can't adopt any amount of the
-  code, presumably without agreement from all the contributors...
 * Set up a call with Pickle folks (Pierre Joye, maybe other key contribs?) and new pecl folks, if we'd like to move
   further with this?
 
@@ -63,6 +60,13 @@ this means Pickle could be used for "old PECL" as well as supporting composer.js
 **TLDR:** since Pickle is already established (although it has not released a first major yet), breaking changes may
 be necessary to update the code.
 
+## Main Options
+
+* Fork Pickle, under the PHP Group repo, update namespaces etc., and do the work to bring it up to speed. Assuming the
+  Licence and copyright permit.
+* Start a new project, adopt relevant/useful parts of code where necessary. Assuming the Licence and copyright permit.
+* Start a new project, without using any Pickle. All code from scratch.
+
 ## Notes
 
 * Adoption was low (perhaps because not an "official" PHP project?)
@@ -108,3 +112,10 @@ be necessary to update the code.
   to be adopted officially by PHP project, either by way of a fork, or discussing with maintainers first.
 * Pickle does have existing tests, although it uses `atoum` which is not something many people are familiar with,
   compared to phpunit for example.
+* Pickle licence is New BSD - is this compatible with PHP Licence? Adopting Pickle (or even taking parts of it) would
+  require licences to be compatible; also bear in mind if licences are NOT compatible, we can't adopt any amount of the
+  code, presumably without agreement from all the contributors...
+  * New BSD is probably compatible. However, using any code from Pickle would either need re-licensing to the PHP
+    Licence (mentioned in the doc), or we'd have to adopt both licences I think? Most likely, we'd need to mark in the
+    LICENCE file both the PHP Licence and New BSD licence (for code originating from Pickle) as well as the copyright
+    for both.
