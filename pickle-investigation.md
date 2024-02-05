@@ -12,11 +12,6 @@ to replace PECL, started around 2014 time.
 * https://wiki.php.net/rfc/pickle
 * https://github.com/FriendsOfPHP/pickle
 
-## Todo
-
-* Set up a call with Pickle folks (Pierre Joye, maybe other key contribs?) and new pecl folks, if we'd like to move
-  further with this?
-
 ## High Level Differences
 
 ### Installation method for end users
@@ -66,6 +61,15 @@ be necessary to update the code.
   Licence and copyright permit.
 * Start a new project, adopt relevant/useful parts of code where necessary. Assuming the Licence and copyright permit.
 * Start a new project, without using any Pickle. All code from scratch.
+
+## Conclusion
+
+We have discussed several approaches, and we are working with several members of the PHP community to ensure which is
+the best way forward. Naturally, given the work that Pickle has done in the past, we did spend some time investigating
+the approach Pickle took. After some discussion in the team moving this forward, comparing various approaches, we have
+decided to start a fresh project. However, we are planning to use some of the parts from Pickle to avoid re-writing
+them from scratch. We will of course be retaining Pickle's copyright and licence, as we highly value the work that
+Pickle contributors have made.
 
 ## Notes
 
