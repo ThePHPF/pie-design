@@ -100,18 +100,16 @@ $ npecl install ext-xdebug
 
 npecl uses `composer/composer` library to help resolve dependencies
 
-```puml
-@startuml
-participant npecl
-participant "composer library" as composer
-participant "packagist.org" as packagist
+```mermaid
+sequenceDiagram
+    participant npecl
+    participant composer as composer library
+    participant packagist as packagist.org
 
-=== npecl install xdebug ===
-npecl -> composer : hi I would like "ext-xdebug" plz
-composer -> packagist : read metadata to resolve deps
-packagist -> composer : metadata to help you resolve things
-composer -> npecl : release information
-@enduml
+    npecl ->> composer : request to install "ext-xdebug"
+    composer ->> packagist : read metadata to resolve dependencies
+    packagist ->> composer : metadata
+    composer ->> npecl : release information
 ```
 
  * if a downstream dep (e.g. `ext-zlib` in the `ext-xdebug` example above) is not installed, bail "u need to install ext-zlib first"
