@@ -7,12 +7,29 @@ Basis:
  * [Discussion doc](https://docs.google.com/document/d/1_N0E9xo3jn9aKrIZHIbTYaY5lXw71BpSO6-it4cRpDo/edit)
  * Internal PHPF dev meet kick-off to review (minutes?)
 
+## Name suggestions
+
+ * npecl
+ * Cucumber/Pickle adjacent:
+   * 🥦 Floret / Broccoli
+   * 🌱 Seedling / Sapling
+   * 🍇 Grape / GraPHPe
+   * 🥒 Enpickle / Pickled
+ * Composer/Conductor/Orchestra adjacent:
+   * 🎷 Sax / Saxophone
+   * 🎺 Trumpet / Horn
+   * 🎻 Violin
+
 ## Assumptions
 
- * npecl is the assumed name, although it is not confirmed
+ * `npecl` is the assumed name in this document, although this is to be discussed and confirmed.
  * `npecl` is a CLI tool, probably bundled as a PHAR like Composer is
    * therefore a usage such as `npecl install <thing>` assumes the PHAR exist in `$PATH`, for example in
      `/usr/bin/npecl`. If not, you would do something like `php npecl.phar install <thing>`.
+ * Following investigation into Pickle, we have determined that the new PECL tool will be a new PHP Foundation based
+   project. However, we are planning to copy some parts from Pickle, given the great work already done on that project.
+   Following the terms of the [New BSD licence](https://github.com/FriendsOfPHP/pickle/blob/master/LICENSE), the parts
+   copied from Pickle will have an additional copyright and licence, and credit to the original Pickle contributors.
 
 ## npecl itself
 
@@ -25,9 +42,90 @@ Basis:
    corresponding `phpize` tool would be used.
  * `npecl` would probably need to be run with `sudo` access (so it can `make install` to root-owned paths). Care should
    be taken to ensure only the minimal amount is run with elevated privileges, so we don't accidentally give root to a
-   malicious PECL package.
+   malicious PECL package. Ideally, `npecl` would run without `sudo`, and just prompt for access, if possible.
 
-@todo document the CLI optionas
+### CLI commands
+
+#### `install {ext-name}{?:version-constraint}{?@dev-branch-name}`
+
+Installs the requested package. The package may be requested with or without `ext-` prefix. `npecl install ext-xdebug`
+and `npecl install xdebug` would be equivalent.
+
+If `version-constraint` is given, try to install that version if it matches the allowed versions.
+
+On Windows this downloads the correct DLL (attached as file to the release tag), if available. Otherwise, it will
+download the source and compile the extension.
+
+It will then attempt to create a 20-{extension_name}.ini file with `extension={extension_name}` in the directory
+returned by `php-config –ini-dir`, the name that is used is the one from the "name" element in the metadata file.
+
+If `@dev-branch-name` is given, try to install from the branch called "branch-name", for example use `@dev-master` to
+compile from your master branch. As branches would usually not have binaries, this would not work for Windows.
+
+You can't use both a `version-constraint` and `@dev-branch-name` at the same time.
+
+Each step should run with as few privileges as possible.
+
+#### `build {ext-name}{?:version-constraint}{?@dev-branch-name}`
+
+Same behaviour as install, but only compiles (or downloads if it's Windows).
+
+#### `changelog {?version}`
+
+Shows the release notes of the version it was going to install, or from the specific version, if given.
+
+#### `download {ext-name}{?:version-constraint}{?@dev-branch-name}`
+
+Same behaviour as build, but puts the files in a local directory for manual building and installation.
+
+#### `info`
+
+Shows the description from the metadata file
+
+#### `list`
+
+Shows all available commands
+
+#### `self-update`
+
+Attempts to upgrade the npecl tool itself
+
+#### `show`
+
+Shows all installed extensions available with the PHP version in the path, including their versions. This includes
+*all* loaded PHP extensions, and not just npecl ones.
+
+#### `verify {?version-constraint}`
+
+Shows the signature of the person who signed the version npecl would install, or from the specific version, if given.
+
+#### `upgrade {?{ext-name}{?:version-constraint}{?@dev-branch-name}}`
+
+Attempts to upgrade all installed versions to the latest available ones on GitHub (unless their major version has
+changed) If a specific package is specified, only attempt to upgrade that specific one.
+
+### CLI Options
+
+#### `--dry-run`
+
+Shows what it is about to do, but doesn't actually install
+
+#### `--force`
+
+To attempt to install a version that doesn't match the version constraints from the meta-data, for instance to install
+an older version than recommended, or when the signature is not available.
+
+#### `--pre-release`
+To allow for installation of pre-release versions
+
+#### `--with-php-config=/path/to/php-config`
+
+Allows installation of extensions with PHP versions that are not in the path
+
+#### `--{option}{?=value}`
+
+All options specified in the `config` section of the composer.json file can also be given, including a value if they
+take them. For example, for Xdebug you could run `npecl install xdebug --without-xdebug-compression`.
 
 ## Extension maintainer: register an npecl package
 
@@ -112,7 +210,8 @@ sequenceDiagram
     composer ->> npecl : release information
 ```
 
- * if a downstream dep (e.g. `ext-zlib` in the `ext-xdebug` example above) is not installed, bail "u need to install ext-zlib first"
+ * if a downstream dep (e.g. `ext-zlib` in the `ext-xdebug` example above) is not installed, Composer can detect this
+   missing depenedency, and warn accordingly.
 
 Once we have the release information, for Linux:
 
@@ -144,7 +243,8 @@ Because arch is optional, we have to try therefore, the following file formats, 
 
 If the release is found:
 
- * download the dll from the release assets (perhaps only support GitHub API initially? does Composer know about assets?)
+ * download the dll from the release assets. Perhaps only support GitHub API initially - Composer does not support
+   fetching/listing assets, so we would need to build this.
  * put the DLL into the appropriate place for the PHP install
 
 ### Remaining steps:
@@ -167,3 +267,71 @@ If the release is found:
      * The git tag (use `git` to read)
      * A file called `CHANGELOG` / `CHANGELOG.md` / `CHANGES` etc. (or other variations)
  * Clean up downloaded and build files
+
+## High level overview
+
+This graph is a high level overview of the key processes of downloading, building and installing both Windows and Linux
+based PHP extensions:
+
+```mermaid
+flowchart LR
+    subgraph composer
+        dependency-resolver
+        release-notes-processing
+        composer-json-php-ext-config
+    end
+    subgraph packagist
+        metadata
+    end
+    subgraph LinuxDownloader
+        direction LR
+        DownloadZipFromGitHub-->ExtractZip
+    end
+    subgraph WindowsDownloader
+        direction LR
+        DetermineExpectedDllNames-->DownloadDllFromGitHub
+    end
+    subgraph LinuxBuilder
+        direction LR
+        Phpize-->Configure
+        Configure-->Make
+    end
+    subgraph WindowsBuilder
+        direction LR
+        no-op
+    end
+    style InstallWithSuperuser fill:#ffa15e
+    subgraph InstallWithSuperuser
+        direction LR
+        InstallLibrary--windows-->CopyDllToPhp
+        InstallLibrary--"linux"-->MakeInstall
+        CopyDllToPhp-->ConfigurePhpIni
+        MakeInstall-->ConfigurePhpIni
+    end
+
+    entrypoint(bin/npecl)
+
+    entrypoint--npecl download-->DownloadCommand
+    DownloadCommand-->Downloader
+    Downloader--resolve ext-name-->DependencyResolver
+    DependencyResolver-->composer
+    composer--request metadata-->packagist
+    Downloader--"linux"-->LinuxDownloader
+    Downloader--windows-->WindowsDownloader
+
+    entrypoint--npecl build-->BuildCommand
+    BuildCommand--1-->Downloader
+    BuildCommand--2-->Builder
+    Builder--"linux"-->LinuxBuilder
+    Builder--windows-->WindowsBuilder
+
+    entrypoint--npecl install-->InstallCommand
+    InstallCommand--1-->Downloader
+    InstallCommand--2-->Builder
+    InstallCommand--3-->Installer
+    Installer-->InstallWithSuperuser
+    InstallWithSuperuser-->ShowReleaseNotes
+    ShowReleaseNotes-->Cleanup
+
+    composer-->ShowReleaseNotes
+```
