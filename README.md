@@ -185,7 +185,9 @@ The descriptions of these items:
  * The `type` dictates if it is a PHP Module (`php-ext`) or a Zend Extension (`php-ext-zend`).
  * Typically, there will be almost no `require` definitions, except `php` version itself
  * The `php-ext` is a new top-level element to provide additional metadata for building the extension, if required.
-   * `priority` can be used to prefix to the INI file, e.g. `90-xdebug.ini` which affects the loading order
+   * `priority` can be used to prefix to the INI file, e.g. `90-xdebug.ini` which affects the loading order. The
+     priority is a number in the range 10-99 inclusive. There are two digits so that the files sort correctly on any
+     platform, whether the sorting is natural or not.
    * `config` may contain flags passed to the compilation of the ext (?)
 
 ## End user: installing an npecl package
