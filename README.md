@@ -331,6 +331,12 @@ flowchart LR
 
     entrypoint(bin/npecl)
 
+    entrypoint--npecl changelog-->ChangelogCommand
+    ChangelogCommand-->DependencyResolver
+
+    entrypoint--npecl info-->InfoCommand
+    InfoCommand-->DependencyResolver
+
     entrypoint--npecl download-->DownloadCommand
     DownloadCommand-->Downloader
     Downloader--resolve ext-name-->DependencyResolver
@@ -345,6 +351,7 @@ flowchart LR
     Builder--"linux"-->LinuxBuilder
     Builder--windows-->WindowsBuilder
 
+    entrypoint--npecl upgrade-->InstallCommand
     entrypoint--npecl install-->InstallCommand
     InstallCommand--1-->Downloader
     InstallCommand--2-->Builder
@@ -352,6 +359,9 @@ flowchart LR
     Installer-->InstallWithSuperuser
     InstallWithSuperuser-->ShowReleaseNotes
     ShowReleaseNotes-->Cleanup
+
+    entrypoint--npecl show-->ShowCommand
+    ShowCommand-->ListInstalledModulesAndVersions
 
     composer-->ShowReleaseNotes
 ```
