@@ -250,9 +250,9 @@ Determine the expected name for the Windows DLL:
  * `extension-name` - We know this already minus `ext-` from the package name
  * `tag` - Composer gave us the release version
  * `php-maj/min` - We know this from the version of PHP that invoked `npecl`
- * `compiler` - ?
+ * `compiler` - processed from `ZEND_MODULE_BUILD_ID` or [parsing phpinfo, like xdebug](https://github.com/xdebug/xdebug.org/blob/9e0df8c80a6942e506a5fae91307da5bbcc08787/src/XdebugVersion.php#L276-L299).
  * `-nts` or omitted - We know this from the version of PHP that invoked `npecl`
- * `arch` - find using `uname -i`
+ * `arch` - find using `uname -m`
 
 Because arch is optional, we have to try therefore, the following file formats, in order:
 
@@ -309,6 +309,9 @@ flowchart LR
     end
     subgraph WindowsDownloader
         direction LR
+        DetermineCompiler-->DetermineExpectedDllNames
+        DetermineZendThreadSafe-->DetermineExpectedDllNames
+        DeterminePlatformArch-->DetermineExpectedDllNames
         DetermineExpectedDllNames-->DownloadDllFromGitHub
     end
     subgraph LinuxBuilder
