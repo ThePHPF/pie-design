@@ -104,10 +104,6 @@ Shows the description from the metadata file
 
 Shows all available commands
 
-#### `self-update`
-
-Attempts to upgrade the npecl tool itself
-
 #### `show`
 
 Shows all installed extensions available with the PHP version in the path, including their versions. This includes
