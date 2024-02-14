@@ -148,10 +148,16 @@ Create a `composer.json` in your repository, commit:
         "priority": 80,
         "configure-options": [
             {
-                "name": "enable-xdebug-dev"
+                "name": "enable-xdebug-dev",
+                "description": "Enable developer flags"
             },
             {
-                "name": "without-xdebug-compression"
+                "name": "without-xdebug-compression",
+                "description": "Disable compression through zlib"
+            },
+            {
+                "name": "some-path-to-something",
+                "description": "This should be the path to the thing that is needed."
             }
         ]
     }
@@ -225,6 +231,17 @@ Once we have the release information, for Linux:
  * run `./configure <options>`
  * run `make`
  * run `make install` (note: this part may need `sudo`)
+
+The `<options>` for `./configure` come from the `$.php-ext.configure-options` section in `composer.json`. These would
+be specified as part of the `build` or `install` commands. Here are some examples:
+
+```bash
+$ npecl install xdebug
+$ npecl install xdebug --enable-xdebug-dev
+$ npecl install xdebug --enable-xdebug-dev --without-xdebug-compression
+$ npecl install xdebug --some-path-to-something=/usr/local/lib/something
+$ npecl install xdebug --not-a-defined-configuration-option # this would fail
+```
 
 ### Windows installation
 

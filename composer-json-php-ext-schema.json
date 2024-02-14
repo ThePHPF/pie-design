@@ -8,7 +8,6 @@
         "php-ext": {
             "type": "object",
             "required": [],
-            "additionalProperties": false,
             "properties": {
                 "priority": {
                     "type": "integer",
@@ -24,13 +23,17 @@
                     "items": {
                         "type": "object",
                         "required": ["name"],
-                        "additionalProperties": false,
                         "properties": {
                             "name": {
                                 "type": "string",
                                 "description": "The name of the flag, this would typically be prefixed with `--`, for example, the value 'the-flag' would be passed as `./configure --the-flag`.",
                                 "example": "without-xdebug-compression",
                                 "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-_]*$"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "The description of what the flag does or means.",
+                                "example": "Disable compression through zlib"
                             }
                         }
                     }
