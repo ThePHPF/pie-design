@@ -31,6 +31,24 @@ Basis:
    Following the terms of the [New BSD licence](https://github.com/FriendsOfPHP/pickle/blob/master/LICENSE), the parts
    copied from Pickle will have an additional copyright and licence, and credit to the original Pickle contributors.
 
+## Out of initial scope
+
+Whilst we are not going to rule out EVER implementing the following features, we just don't plan to include them in the
+initial version of this new tool. We will consider these items for future inclusion and improvements:
+
+ * `npecl self-update` - we can likely replicate the way Composer does a self-update, but this is out of initial scope
+   since we will be distributing as a PHAR, it is relatively straightforward to do a simple replacement to begin with.
+ * Compiling Windows binaries on the fly on the end-users system. We will rely on precompiled Windows binaries in the
+   GitHub release assets to begin with.
+ * Binary distribution for any other platform except Windows. We will rely on compiling binaries on the fly on the end-
+   user's system for all platforms except Windows to begin with.
+ * Installing extensions per-project
+ * Ability to process a per-project `composer.json` and install missing extensions globally
+ * Dealing with signing infrastructure and verification of signatures
+ * Changelog section in composer.json
+ * Adding "search" to the npecl tool
+ * List security issues in `composer.json` file
+
 ## npecl itself
 
  * use `symfony/console` to simplify writing the CLI tool itself
