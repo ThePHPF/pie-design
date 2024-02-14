@@ -115,9 +115,6 @@ Shows what it is about to do, but doesn't actually install
 To attempt to install a version that doesn't match the version constraints from the meta-data, for instance to install
 an older version than recommended, or when the signature is not available.
 
-#### `--pre-release`
-To allow for installation of pre-release versions
-
 #### `--with-php-config=/path/to/php-config`
 
 Allows installation of extensions with PHP versions that are not in the path
