@@ -145,11 +145,15 @@ Create a `composer.json` in your repository, commit:
         "ext-zetalib": "*"
     },
     "php-ext": {
-        "priority": 90,
-        "config": {
-            "enable-xdebug-dev": false,
-            "without-xdebug-compression": false
-        }
+        "priority": 80,
+        "configure-options": [
+            {
+                "name": "enable-xdebug-dev"
+            },
+            {
+                "name": "without-xdebug-compression"
+            }
+        ]
     }
 }
 ```
@@ -185,10 +189,7 @@ The descriptions of these items:
  * The `type` dictates if it is a PHP Module (`php-ext`) or a Zend Extension (`php-ext-zend`).
  * Typically, there will be almost no `require` definitions, except `php` version itself
  * The `php-ext` is a new top-level element to provide additional metadata for building the extension, if required.
-   * `priority` can be used to prefix to the INI file, e.g. `90-xdebug.ini` which affects the loading order. The
-     priority is a number in the range 10-99 inclusive. There are two digits so that the files sort correctly on any
-     platform, whether the sorting is natural or not.
-   * `config` may contain flags passed to the compilation of the ext (?)
+   * Proposed JSON schema for this is in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
 
 ## End user: installing an npecl package
 
