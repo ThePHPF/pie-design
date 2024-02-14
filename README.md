@@ -192,17 +192,16 @@ the GitHub release.
 
 The name for the DLLs must follow the following pattern:
 
- * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}?.dll`
+ * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.dll`
 
 The descriptions of these items:
 
  * `extension-name` the name of the extension, e.g. `xdebug` - this is the same as defined in `composer.json` minus `ext-`
  * `tag` for example `3.3.0alpha3` - defined by the tag/release you have made
  * `php-maj/min` - for example `8.3` for PHP 8.3.*
- * `compiler` - usually `vc16`?
- * `-nts` - optional - non-thread safe. If omitted, thread-safe mode is assumed
- * `-arch` - optional - for example `x86_64`, fetch using `uname -i`. If omitted, the extension is assumed to be
-   compatible with all architectures
+ * `compiler` - usually something like `vc16` - this should match the `PHP_COMPILER_ID`
+ * `-nts` - optional - non-thread safe. If omitted, thread-safe mode (ZTS) is assumed.
+ * `-arch` - for example `AMD64`, fetch using `php -r "echo php_uname('m');"`.
 
 ### Notes on the `composer.json`
 
@@ -265,16 +264,14 @@ Determine the expected name for the Windows DLL:
  * `extension-name` - We know this already minus `ext-` from the package name
  * `tag` - Composer gave us the release version
  * `php-maj/min` - We know this from the version of PHP that invoked `npecl`
- * `compiler` - processed from `ZEND_MODULE_BUILD_ID` or [parsing phpinfo, like xdebug](https://github.com/xdebug/xdebug.org/blob/9e0df8c80a6942e506a5fae91307da5bbcc08787/src/XdebugVersion.php#L276-L299).
+ * `compiler` - processed from `PHP_COMPILER_ID` (if possible in userland) or [parsing phpinfo, like xdebug](https://github.com/xdebug/xdebug.org/blob/9e0df8c80a6942e506a5fae91307da5bbcc08787/src/XdebugVersion.php#L276-L299).
  * `-nts` or omitted - We know this from the version of PHP that invoked `npecl`
- * `arch` - find using `uname -m`
+* `-arch` - for example `AMD64`, fetch using `php -r "echo php_uname('m');"`.
 
 Because arch is optional, we have to try therefore, the following file formats, in order:
 
  * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
-   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `x86_64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-x86_64.dll` 
- * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}.dll`
-   * example (same specs): `php_xdebug-3.3.0alpha3-8.3-vs16-nts.dll
+   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `AMD64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-AMD64.dll`
 
 If the release is found:
 
