@@ -1,4 +1,4 @@
-# npecl design
+# 🥧 PIE (PHP Installer for Extensions) Design
 
 A work in progress design documentation for the "new pecl" iteration.
 
@@ -7,7 +7,9 @@ Basis:
  * [Discussion doc](https://docs.google.com/document/d/1_N0E9xo3jn9aKrIZHIbTYaY5lXw71BpSO6-it4cRpDo/edit)
  * Internal PHPF dev meet kick-off to review (minutes?)
 
-## Name suggestions
+## Naming
+
+The current favourite name is `pie`, the **P**HP **I**nstaller for **E**xtensions.
 
  * npecl
  * Cucumber/Pickle adjacent:
@@ -19,13 +21,23 @@ Basis:
    * 🎷 Sax / Saxophone
    * 🎺 Trumpet / Horn
    * 🎻 Violin
+ * Community suggestions:
+   * 🌶️ Pepper ([src](https://twitter.com/simonhamp/status/1758446710295036412))
+   * php-ext ([src](https://twitter.com/carlos_granados/status/1758445815209599182))
+   * phpem/pem / PHP Extension Manager ([src](https://twitter.com/strandafili/status/1758447294234386765))
+   * install-php-extension ([src](https://phpc.social/@ocramius@mastodon.social/111940752578558129)
+   * 🥧 **PIE / PHP Installer for Extensions** ([src](https://phpc.social/@psycodepath@mastodon.social/111940835012754835))
+   * Composter ([src](https://twitter.com/rdohms/status/1758450203185512581))
+   * Compecler ([src](https://phpc.social/@rskuipers/111940888231727790))
+   * Maestro ([src](https://twitter.com/imightbedavi/status/1758452730350141748))
+   * phex ([src](https://twitter.com/GaelReyrol/status/1758452113661653356))
 
 ## Assumptions
 
- * `npecl` is the assumed name in this document, although this is to be discussed and confirmed.
- * `npecl` is a CLI tool, probably bundled as a PHAR like Composer is
-   * therefore a usage such as `npecl install <thing>` assumes the PHAR exist in `$PATH`, for example in
-     `/usr/bin/npecl`. If not, you would do something like `php npecl.phar install <thing>`.
+ * `pie` is the assumed name in this document, although this is to be discussed and confirmed.
+ * `pie` is a CLI tool, probably bundled as a PHAR like Composer is
+   * therefore a usage such as `pie install <thing>` assumes the PHAR exist in `$PATH`, for example in
+     `/usr/bin/pie`. If not, you would do something like `php pie.phar install <thing>`.
  * Following investigation into Pickle, we have determined that the new PECL tool will be a new PHP Foundation based
    project. However, we are planning to copy some parts from Pickle, given the great work already done on that project.
    Following the terms of the [New BSD licence](https://github.com/FriendsOfPHP/pickle/blob/master/LICENSE), the parts
@@ -36,7 +48,7 @@ Basis:
 Whilst we are not going to rule out EVER implementing the following features, we just don't plan to include them in the
 initial version of this new tool. We will consider these items for future inclusion and improvements:
 
- * `npecl self-update` - we can likely replicate the way Composer does a self-update, but this is out of initial scope
+ * `pie self-update` - we can likely replicate the way Composer does a self-update, but this is out of initial scope
    since we will be distributing as a PHAR, it is relatively straightforward to do a simple replacement to begin with.
  * Compiling Windows binaries on the fly on the end-users system. We will rely on precompiled Windows binaries in the
    GitHub release assets to begin with.
@@ -46,28 +58,30 @@ initial version of this new tool. We will consider these items for future inclus
  * Ability to process a per-project `composer.json` and install missing extensions globally
  * Dealing with signing infrastructure and verification of signatures
  * Changelog section in composer.json
- * Adding "search" to the npecl tool
+ * Adding "search" to the PIE tool
  * List security issues in `composer.json` file
 
-## npecl itself
+## PIE itself
 
  * use `symfony/console` to simplify writing the CLI tool itself
  * use `composer/composer` to resolve dependencies; it knows how to do all this stuff already, lets not re-invent the
    wheel - once we have a better idea of what calls we need to make, it may make sense to split some of
    `composer/composer` out into separate libraries we can consume; although that might be a huge undertaking in itself,
    so is really just a "strech goal".
- * There may be multiple versions of php on a system. The version of php invoking `npecl` would be assumed, and its
-   corresponding `phpize` tool would be used.
- * `npecl` would probably need to be run with `sudo` access (so it can `make install` to root-owned paths). Care should
+ * There may be multiple versions of php on a system. The version of php invoking `pie` would be assumed, and its
+   corresponding `phpize` tool would be used. To use a different installed PHP version, you could use (for example)
+   `/usr/bin/php8.2 /usr/bin/pie ...`
+ * Parts of `pie` will need to be run with `sudo` access (so it can `make install` to root-owned paths). Care should
    be taken to ensure only the minimal amount is run with elevated privileges, so we don't accidentally give root to a
-   malicious PECL package. Ideally, `npecl` would run without `sudo`, and just prompt for access, if possible.
+   malicious PECL package. Ideally, `pie` would run without `sudo`, and just prompt for access, when needed (for
+   example, by invoking a sub-process with `sudo`.
 
 ### CLI commands
 
 #### `install {ext-name}{?:version-constraint}{?@dev-branch-name}`
 
-Installs the requested package. The package may be requested with or without `ext-` prefix. `npecl install ext-xdebug`
-and `npecl install xdebug` would be equivalent.
+Installs the requested package. The package may be requested with or without `ext-` prefix. `pie install ext-xdebug`
+and `pie install xdebug` would be equivalent.
 
 If `version-constraint` is given, try to install that version if it matches the allowed versions.
 
@@ -107,11 +121,11 @@ Shows all available commands
 #### `show`
 
 Shows all installed extensions available with the PHP version in the path, including their versions. This includes
-*all* loaded PHP extensions, and not just npecl ones.
+*all* loaded PHP extensions, and not just PIE-sourced ones.
 
 #### `verify {?version-constraint}`
 
-Shows the signature of the person who signed the version npecl would install, or from the specific version, if given.
+Shows the signature of the person who signed the version PIE would install, or from the specific version, if given.
 
 #### `upgrade {?{ext-name}{?:version-constraint}{?@dev-branch-name}}`
 
@@ -136,9 +150,9 @@ Allows installation of extensions with PHP versions that are not in the path
 #### `--{option}{?=value}`
 
 All options specified in the `config` section of the composer.json file can also be given, including a value if they
-take them. For example, for Xdebug you could run `npecl install xdebug --without-xdebug-compression`.
+take them. For example, for Xdebug you could run `pie install xdebug --without-xdebug-compression`.
 
-## Extension maintainer: register an npecl package
+## Extension maintainer: register a PIE package
 
 Create a `composer.json` in your repository, commit:
 
@@ -207,26 +221,26 @@ The descriptions of these items:
  * The `php-ext` is a new top-level element to provide additional metadata for building the extension, if required.
    * Proposed JSON schema for this is in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
 
-## End user: installing an npecl package
+## End user: installing a PIE package
 
 Run:
 
 ```bash
-$ npecl install ext-xdebug
+$ pie install ext-xdebug
 ```
 
-npecl uses `composer/composer` library to help resolve dependencies
+PIE uses `composer/composer` library to help resolve dependencies
 
 ```mermaid
 sequenceDiagram
-    participant npecl
+    participant pie
     participant composer as composer library
     participant packagist as packagist.org
 
-    npecl ->> composer : request to install "ext-xdebug"
+    pie ->> composer : request to install "ext-xdebug"
     composer ->> packagist : read metadata to resolve dependencies
     packagist ->> composer : metadata
-    composer ->> npecl : release information
+    composer ->> pie : release information
 ```
 
  * if a downstream dep (e.g. `ext-zlib` in the `ext-xdebug` example above) is not installed, Composer can detect this
@@ -246,11 +260,11 @@ The `<options>` for `./configure` come from the `$.php-ext.configure-options` se
 be specified as part of the `build` or `install` commands. Here are some examples:
 
 ```bash
-$ npecl install xdebug
-$ npecl install xdebug --enable-xdebug-dev
-$ npecl install xdebug --enable-xdebug-dev --without-xdebug-compression
-$ npecl install xdebug --some-path-to-something=/usr/local/lib/something
-$ npecl install xdebug --not-a-defined-configuration-option # this would fail
+$ pie install xdebug
+$ pie install xdebug --enable-xdebug-dev
+$ pie install xdebug --enable-xdebug-dev --without-xdebug-compression
+$ pie install xdebug --some-path-to-something=/usr/local/lib/something
+$ pie install xdebug --not-a-defined-configuration-option # this would fail
 ```
 
 ### Windows installation
@@ -259,9 +273,9 @@ Determine the expected name for the Windows DLL:
 
  * `extension-name` - We know this already minus `ext-` from the package name
  * `tag` - Composer gave us the release version
- * `php-maj/min` - We know this from the version of PHP that invoked `npecl`
+ * `php-maj/min` - We know this from the version of PHP that invoked `pie`
  * `compiler` - processed from `PHP_COMPILER_ID` (if possible in userland) or [parsing phpinfo, like xdebug](https://github.com/xdebug/xdebug.org/blob/9e0df8c80a6942e506a5fae91307da5bbcc08787/src/XdebugVersion.php#L276-L299).
- * `-nts` or omitted - We know this from the version of PHP that invoked `npecl`
+ * `-nts` or omitted - We know this from the version of PHP that invoked `pie`
 * `-arch` - for example `AMD64`, fetch using `php -r "echo php_uname('m');"`.
 
 Because arch is optional, we have to try therefore, the following file formats, in order:
@@ -340,15 +354,15 @@ flowchart LR
         MakeInstall-->ConfigurePhpIni
     end
 
-    entrypoint(bin/npecl)
+    entrypoint(bin/pie)
 
-    entrypoint--npecl changelog-->ChangelogCommand
+    entrypoint--pie changelog-->ChangelogCommand
     ChangelogCommand-->DependencyResolver
 
-    entrypoint--npecl info-->InfoCommand
+    entrypoint--pie info-->InfoCommand
     InfoCommand-->DependencyResolver
 
-    entrypoint--npecl download-->DownloadCommand
+    entrypoint--pie download-->DownloadCommand
     DownloadCommand-->Downloader
     Downloader--resolve ext-name-->DependencyResolver
     DependencyResolver-->composer
@@ -356,14 +370,14 @@ flowchart LR
     Downloader--"linux"-->LinuxDownloader
     Downloader--windows-->WindowsDownloader
 
-    entrypoint--npecl build-->BuildCommand
+    entrypoint--pie build-->BuildCommand
     BuildCommand--1-->Downloader
     BuildCommand--2-->Builder
     Builder--"linux"-->LinuxBuilder
     Builder--windows-->WindowsBuilder
 
-    entrypoint--npecl upgrade-->InstallCommand
-    entrypoint--npecl install-->InstallCommand
+    entrypoint--pie upgrade-->InstallCommand
+    entrypoint--pie install-->InstallCommand
     InstallCommand--1-->Downloader
     InstallCommand--2-->Builder
     InstallCommand--3-->Installer
@@ -371,7 +385,7 @@ flowchart LR
     InstallWithSuperuser-->ShowReleaseNotes
     ShowReleaseNotes-->Cleanup
 
-    entrypoint--npecl show-->ShowCommand
+    entrypoint--pie show-->ShowCommand
     ShowCommand-->ListInstalledModulesAndVersions
 
     composer-->ShowReleaseNotes
