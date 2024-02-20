@@ -123,10 +123,6 @@ Shows all available commands
 Shows all installed extensions available with the PHP version in the path, including their versions. This includes
 *all* loaded PHP extensions, and not just PIE-sourced ones.
 
-#### `verify {?version-constraint}`
-
-Shows the signature of the person who signed the version PIE would install, or from the specific version, if given.
-
 #### `upgrade {?{ext-name}{?:version-constraint}{?@dev-branch-name}}`
 
 Attempts to upgrade all installed versions to the latest available ones on GitHub (unless their major version has
