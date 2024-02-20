@@ -5,7 +5,7 @@ A work in progress design documentation for the "new pecl" iteration.
 Basis:
 
  * [Discussion doc](https://docs.google.com/document/d/1_N0E9xo3jn9aKrIZHIbTYaY5lXw71BpSO6-it4cRpDo/edit)
- * Internal PHPF dev meet kick-off to review (minutes?)
+ * Internal PHPF dev meet kick-off to review ([minutes](https://gist.github.com/pronskiy/621bc8f8e901d4cd1f5a630c463be5b2))
 
 ## Naming
 
