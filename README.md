@@ -159,11 +159,11 @@ Create a `composer.json` in your repository, commit:
     "license": "Xdebug-1.03",
     "description": "Xdebug is an amazing tool...",
     "require": {
-        "ext-zlib": "*",
+        "ext-something": "*",
         "php": ">=7.4.21,<8.4"
     },
     "conflict": {
-        "ext-zetalib": "*"
+        "ext-a-conflicting-extension": "*"
     },
     "php-ext": {
         "priority": 80,
@@ -239,8 +239,10 @@ sequenceDiagram
     composer ->> pie : release information
 ```
 
- * if a downstream dep (e.g. `ext-zlib` in the `ext-xdebug` example above) is not installed, Composer can detect this
-   missing depenedency, and warn accordingly.
+ * if a downstream dep (e.g. `ext-something` in the `ext-xdebug` example above) is not installed, Composer can detect
+   this missing depenedency, and warn accordingly.
+ * whilst it would be useful for end users, library requirements will not currently be factored into the `composer.json`
+   dependencies, due to the complexity of different package managers on different platforms.
 
 Once we have the release information, for Linux:
 
