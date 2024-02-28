@@ -91,7 +91,7 @@ download the source and compile the extension.
 It will then attempt to create a `20-{extension_name}.ini` file with `extension={extension_name}` in the directory
 returned by `php-config --ini-dir`, the name that is used is the one from the "name" element in the metadata file.
 
-If the extension is a Zend extension (such as Xdebug), then it will the line `zend_extension={extension_name}`
+If the extension is a Zend extension (such as Xdebug), then it will write the line `zend_extension={extension_name}`
 instead.
 
 If the extension has a composer.json defined priority, the `20` in the ini file filename will be replaced by that
