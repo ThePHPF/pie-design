@@ -88,8 +88,14 @@ If `version-constraint` is given, try to install that version if it matches the 
 On Windows this downloads the correct DLL (attached as file to the release tag), if available. Otherwise, it will
 download the source and compile the extension.
 
-It will then attempt to create a 20-{extension_name}.ini file with `extension={extension_name}` in the directory
-returned by `php-config –ini-dir`, the name that is used is the one from the "name" element in the metadata file.
+It will then attempt to create a `20-{extension_name}.ini` file with `extension={extension_name}` in the directory
+returned by `php-config --ini-dir`, the name that is used is the one from the "name" element in the metadata file.
+
+If the extension is a Zend extension (such as Xdebug), then it will the line `zend_extension={extension_name}`
+instead.
+
+If the extension has a composer.json defined priority, the `20` in the ini file filename will be replaced by that
+priority.
 
 If `@dev-branch-name` is given, try to install from the branch called "branch-name", for example use `@dev-master` to
 compile from your master branch. As branches would usually not have binaries, this would not work for Windows.
@@ -126,7 +132,7 @@ Shows all installed extensions available with the PHP version in the path, inclu
 #### `upgrade {?{ext-name}{?:version-constraint}{?@dev-branch-name}}`
 
 Attempts to upgrade all installed versions to the latest available ones on GitHub (unless their major version has
-changed) If a specific package is specified, only attempt to upgrade that specific one.
+changed). If a specific package is specified, only attempt to upgrade that specific one.
 
 ### CLI Options
 
@@ -207,7 +213,7 @@ The descriptions of these items:
  * `php-maj/min` - for example `8.3` for PHP 8.3.*
  * `compiler` - usually something like `vc16` - this should match the `PHP_COMPILER_ID`
  * `-nts` - optional - non-thread safe. If omitted, thread-safe mode (ZTS) is assumed.
- * `-arch` - for example `AMD64`, fetch using `php -r "echo php_uname('m');"`.
+ * `-arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"`.
 
 ### Notes on the `composer.json`
 
@@ -274,12 +280,12 @@ Determine the expected name for the Windows DLL:
  * `php-maj/min` - We know this from the version of PHP that invoked `pie`
  * `compiler` - processed from `PHP_COMPILER_ID` (if possible in userland) or [parsing phpinfo, like xdebug](https://github.com/xdebug/xdebug.org/blob/9e0df8c80a6942e506a5fae91307da5bbcc08787/src/XdebugVersion.php#L276-L299).
  * `-nts` or omitted - We know this from the version of PHP that invoked `pie`
-* `-arch` - for example `AMD64`, fetch using `php -r "echo php_uname('m');"`.
+ * `-arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"`.
 
 Because arch is optional, we have to try therefore, the following file formats, in order:
 
  * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
-   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `AMD64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-AMD64.dll`
+   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `x86_64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-x86_64.dll`
 
 If the release is found:
 
@@ -293,7 +299,7 @@ If the release is found:
    * If `php-config --ini-dir` exists, and there is no `{priority}-{extension-name}.ini` (or `{extension-name}.ini`?)
      file, create one with contents:
      ```ini
-     extension/zend_extension"={extension-name}
+     extension/zend_extension={extension-name}
      ```
      in the "conf.d" directory (if configured).
    * If the file `{priority}-{extension-name}.ini` or `{extension-name}.ini` exists in the downloaded release tarball,
