@@ -17,6 +17,12 @@
                     "example": 80,
                     "default": 80
                 },
+                "support-zts": {
+                    "type": "boolean",
+                    "description": "Does this package support Zend Thread Safety",
+                    "example": false,
+                    "default": true
+                },
                 "configure-options": {
                     "type": "array",
                     "description": "These configure options make up the flags that can be passed to ./configure when installing the extension.",
