@@ -224,7 +224,8 @@ The descriptions of these items:
  * The `php-ext` is a new top-level element to provide additional metadata for building the extension, if required.
    * Proposed JSON schema for this is in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
    * It is assumed that packages all support Zend Thread Safe mode (ZTS). If a package does **not** support ZTS mode,
-     the key `"support-zts": false` should be set in `php-ext` section
+     the key `"support-zts": false` should be set in `php-ext` section, but you may explicitly advertise ZTS support by
+     specifying `"support-zts": true`.
 
 ## End user: installing a PIE package
 
