@@ -289,8 +289,8 @@ $ pie install xdebug --not-a-defined-configuration-option # this would fail
 
 ### Windows installation
 
-When installing the extension on Windows, the PHP version invoking PIE would be used, unless `--with-php-path=<php-path>` is
-provided. Example:
+When installing the extension on Windows, the PHP version invoking PIE would be used for determining the PHP version,
+library install path and so on, unless `--with-php-path=<php-path>` is provided. Example:
 
 ```powershell
 # Assuming C:\usr\php8.3.4\php.exe is in the $PATH
