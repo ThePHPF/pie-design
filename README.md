@@ -218,8 +218,10 @@ The descriptions of these items:
 
 #### Contents of the Windows ZIP
 
-The pre-built ZIP should contain at minimum a DLL named `php_{extension-name}.dll`. It may include additional resources,
-such as:
+The pre-built ZIP should contain at minimum a DLL named in the same way as the ZIP itself, for example
+`php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.dll`. The `.dll` will be moved into the PHP
+extensions path, and renamed, e.g. to `C:\path\to\php\ext\php_{extension-name}.dll`. The ZIP file may include
+additional resources, such as:
 
  * `php_{extension-name}.pdb` - this will be moved alongside the `C:\path\to\php\ext\php_{extension-name}.dll`
  * `*.dll` - any other `.dll` would be moved alongside `C:\path\to\php\php.exe`
@@ -320,7 +322,8 @@ If the release is found:
    fetching/listing assets, so we would need to build this.
  * Extract the ZIP to a temporary location
  * Move the contents of the ZIP according to these rules:
-   * Move `php_{extension-name}.dll` to `$PHP_PATH\ext\php_{extension-name}.dll`
+   * Move `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
+     to `$PHP_PATH\ext\php_{extension-name}.dll`
    * Move `php_{extension-name}.pdb` to `$PHP_PATH\ext\php_{extension-name}.pdb` (if it exists)
    * Move `*.dll` to `$PHP_PATH\*.dll` (if they exist, but exclude `php_{extension-name}.dll`)
    * Move any other file in the ZIP to `$PHP_PATH\extras\{extension-name}\.`
