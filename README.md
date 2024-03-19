@@ -173,6 +173,7 @@ Create a `composer.json` in your repository, commit:
     },
     "php-ext": {
         "priority": 80,
+        "support-zts": false,
         "configure-options": [
             {
                 "name": "enable-xdebug-dev",
@@ -222,6 +223,9 @@ The descriptions of these items:
  * Typically, there will be almost no `require` definitions, except `php` version itself
  * The `php-ext` is a new top-level element to provide additional metadata for building the extension, if required.
    * Proposed JSON schema for this is in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
+   * It is assumed that packages all support Zend Thread Safe mode (ZTS). If a package does **not** support ZTS mode,
+     the key `"support-zts": false` should be set in `php-ext` section, but you may explicitly advertise ZTS support by
+     specifying `"support-zts": true`.
 
 ## End user: installing a PIE package
 
@@ -249,6 +253,9 @@ sequenceDiagram
    this missing depenedency, and warn accordingly.
  * whilst it would be useful for end users, library requirements will not currently be factored into the `composer.json`
    dependencies, due to the complexity of different package managers on different platforms.
+ * The package will be checked to see if it is compatible with ZTS mode. If using a `--with-php-config` with ZTS
+   enabled, but the extension specifies `"support-zts": false` in its `composer.json` manifest, the installation will
+   be halted with an error explanation.
 
 Once we have the release information, for Linux:
 
