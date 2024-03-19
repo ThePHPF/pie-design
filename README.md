@@ -200,12 +200,12 @@ When releases are made, Packagist will do the usual thing of producing metadata 
 ### Windows binaries
 
 Windows needs pre-built binary DLLs. The expected workflow is that the release is made, then some kind of build takes
-place (for example, in a GitHub Action, or manually on a compatible build environment), and the `.dll` file is added to
+place (for example, in a GitHub Action, or manually on a compatible build environment), and the `.zip` file is added to
 the GitHub release.
 
-The name for the DLLs must follow the following pattern:
+The name for the ZIP must follow the following pattern:
 
- * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.dll`
+ * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.zip`
 
 The descriptions of these items:
 
@@ -215,6 +215,17 @@ The descriptions of these items:
  * `compiler` - usually something like `vc16` - this should match the `PHP_COMPILER_ID`
  * `-nts` - optional - non-thread safe. If omitted, thread-safe mode (ZTS) is assumed.
  * `-arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"`.
+
+#### Contents of the Windows ZIP
+
+The pre-built ZIP should contain at minimum a DLL named in the same way as the ZIP itself, for example
+`php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.dll`. The `.dll` will be moved into the PHP
+extensions path, and renamed, e.g. to `C:\path\to\php\ext\php_{extension-name}.dll`. The ZIP file may include
+additional resources, such as:
+
+ * `php_{extension-name}.pdb` - this will be moved alongside the `C:\path\to\php\ext\php_{extension-name}.dll`
+ * `*.dll` - any other `.dll` would be moved alongside `C:\path\to\php\php.exe`
+ * Any other file, which would be moved into `C:\path\to\php\extras\{extension-name}\.`
 
 ### Notes on the `composer.json`
 
@@ -280,7 +291,18 @@ $ pie install xdebug --not-a-defined-configuration-option # this would fail
 
 ### Windows installation
 
-Determine the expected name for the Windows DLL:
+When installing the extension on Windows, the PHP version invoking PIE would be used for determining the PHP version,
+library install path and so on, unless `--with-php-path=<php-path>` is provided. Example:
+
+```powershell
+# Assuming C:\usr\php8.3.4\php.exe is in the $PATH
+$ pie install xdebug                                     # uses C:\usr\php8.3.4\php.exe (i.e. the version that invoked PIE)
+$ pie install xdebug --with-php-path="C:\usr\php7.4.33"  # uses C:\usr\php7.4.33\php.exe
+```
+
+In the follow examples, the `$PHP_PATH` is whichever the path is given above, e.g. `C:\usr\php8.3.4` or `C:\usr\php7.4.33`
+
+Determine the expected name for the Windows ZIP:
 
  * `extension-name` - We know this already minus `ext-` from the package name
  * `tag` - Composer gave us the release version
@@ -291,14 +313,20 @@ Determine the expected name for the Windows DLL:
 
 Because arch is optional, we have to try therefore, the following file formats, in order:
 
- * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
-   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `x86_64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-x86_64.dll`
+ * `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.zip`
+   * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on an `x86_64` machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-x86_64.zip`
 
 If the release is found:
 
- * download the dll from the release assets. Perhaps only support GitHub API initially - Composer does not support
+ * download the ZIP from the release assets. Perhaps only support GitHub API initially - Composer does not support
    fetching/listing assets, so we would need to build this.
- * put the DLL into the appropriate place for the PHP install
+ * Extract the ZIP to a temporary location
+ * Move the contents of the ZIP according to these rules:
+   * Move `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
+     to `$PHP_PATH\ext\php_{extension-name}.dll`
+   * Move `php_{extension-name}.pdb` to `$PHP_PATH\ext\php_{extension-name}.pdb` (if it exists)
+   * Move `*.dll` to `$PHP_PATH\*.dll` (if they exist, but exclude `php_{extension-name}.dll`)
+   * Move any other file in the ZIP to `$PHP_PATH\extras\{extension-name}\.`
 
 ### Remaining steps:
 
