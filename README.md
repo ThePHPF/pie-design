@@ -217,7 +217,7 @@ ONLY AN EXAMPLE, and is not necessarily the real `composer.json` in Xdebug.
     "conflict": {
         "ext-a-conflicting-extension": "*"
     },
-    "provide": {
+    "replace": {
         "ext-xdebug": "*"
     },
     "php-ext": {
@@ -280,7 +280,7 @@ for the release
   provide some predictable consistency between them (for example, a package
   named `xdebug/xdebug` would reasonably be expected to name the extension as
   `ext-xdebug`). To help semantic understanding, a PIE package MAY optionally
-  specify a `provide` for the extension, in the format `ext-my-ext`. Whilst this
+  specify a `replace` for the extension, in the format `ext-my-ext`. Whilst this
   will not be used by PIE (at least for now), it may provide some benefit in
   understanding the correlation between the package name (e.g. `asgrim/my-ext`)
   and the extension name (e.g. `ext-my-ext`).
