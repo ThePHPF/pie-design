@@ -201,11 +201,12 @@ run `pie install xdebug --without-xdebug-compression`.
 
 ## Extension maintainer: register a PIE package
 
-Create a `composer.json` in your repository, commit:
+Create a `composer.json` in your repository, and commit it. The following is
+ONLY AN EXAMPLE, and is not necessarily the real `composer.json` in Xdebug.
 
 ```json
 {
-    "name": "ext-xdebug",
+    "name": "xdebug/xdebug",
     "type": "php-ext-zend",
     "license": "Xdebug-1.03",
     "description": "Xdebug is an amazing tool...",
@@ -216,7 +217,11 @@ Create a `composer.json` in your repository, commit:
     "conflict": {
         "ext-a-conflicting-extension": "*"
     },
+    "replace": {
+        "ext-xdebug": "*"
+    },
     "php-ext": {
+        "name": "ext-xdebug",
         "priority": 80,
         "support-zts": false,
         "configure-options": [
@@ -245,6 +250,41 @@ will read the `composer.json` as usual.
 When releases are made, Packagist will do the usual thing of producing metadata
 for the release
 
+### Notes on the `composer.json`
+
+* The `name` MUST be in a typical `vendor/package` format seen in regular
+  Composer PHP packages, for example `asgrim/my-ext`.
+* The `type` dictates if it is a PHP Module (`php-ext`) or a Zend
+  Extension (`php-ext-zend`).
+* Typically, there will be almost no `require` definitions, except `php` version
+  itself.
+* The `php-ext` is a new top-level element to provide additional metadata for
+  building the extension, if required.
+    * Whilst it is not mandatory, a PIE package SHOULD specify the extension
+      name in the `extension-name` field. If the `extension-name` is omitted,
+      invalid, or an empty string, the `extension-name` will be derived from
+      the top level `name`. The `vendor/` prefix will be removed, and that will
+      be used as the extension name, for example `asgrim/my-ext` will become
+      `ext-my-ext`. The `extension-name` field, if defined, may or may not have
+      the `ext-` prefix, and tooling such as PIE will be expected to normalise
+      this appropriately.
+    * Proposed JSON schema for this is
+      in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
+    * It is assumed that packages all support Zend Thread Safe mode (ZTS). If a
+      package does **not** support ZTS mode,
+      the key `"support-zts": false` should be set in `php-ext` section, but you
+      may explicitly advertise ZTS support by
+      specifying `"support-zts": true`.
+* There is a slight disconnect between the Composer package name, and the
+  extension name itself, although typically extension authors are expected to
+  provide some predictable consistency between them (for example, a package
+  named `xdebug/xdebug` would reasonably be expected to name the extension as
+  `ext-xdebug`). To help semantic understanding, a PIE package MAY optionally
+  specify a `replace` for the extension, in the format `ext-my-ext`. Whilst this
+  will not be used by PIE (at least for now), it may provide some benefit in
+  understanding the correlation between the package name (e.g. `asgrim/my-ext`)
+  and the extension name (e.g. `ext-my-ext`).
+
 ### Windows binaries
 
 Windows needs pre-built binary DLLs. The expected workflow is that the release
@@ -259,9 +299,7 @@ The name for the ZIP must follow the following pattern:
 
 The descriptions of these items:
 
-* `extension-name` the name of the extension, e.g. `xdebug` - this is the same
-  as defined in `composer.json`
-  minus `ext-`
+* `extension-name` the name of the extension, e.g. `xdebug`
 * `tag` for example `3.3.0alpha3` - defined by the tag/release you have made
 * `php-maj/min` - for example `8.3` for PHP 8.3.*
 * `compiler` - usually something like `vc16` - this should match
@@ -285,24 +323,6 @@ additional resources, such as:
 * `*.dll` - any other `.dll` would be moved alongside `C:\path\to\php\php.exe`
 * Any other file, which would be moved
   into `C:\path\to\php\extras\{extension-name}\.`
-
-### Notes on the `composer.json`
-
-* The `name` is not a typical `vendor/package` format, it is `ext-package`
-  format.
-* The `type` dictates if it is a PHP Module (`php-ext`) or a Zend
-  Extension (`php-ext-zend`).
-* Typically, there will be almost no `require` definitions, except `php` version
-  itself
-* The `php-ext` is a new top-level element to provide additional metadata for
-  building the extension, if required.
-    * Proposed JSON schema for this is
-      in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
-    * It is assumed that packages all support Zend Thread Safe mode (ZTS). If a
-      package does **not** support ZTS mode,
-      the key `"support-zts": false` should be set in `php-ext` section, but you
-      may explicitly advertise ZTS support by
-      specifying `"support-zts": true`.
 
 ## End user: installing a PIE package
 
