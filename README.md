@@ -295,24 +295,26 @@ the GitHub release.
 
 The name for the ZIP must follow the following pattern:
 
-* `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.zip`
+* `php_{extension-name}-{tag}-{php-maj/min}-{ts|nts}-{compiler}-{arch}.zip`
+* Example: `php_xdebug-3.3.2-8.3-ts-vs16-x86_64.zip`
 
 The descriptions of these items:
 
 * `extension-name` the name of the extension, e.g. `xdebug`
 * `tag` for example `3.3.0alpha3` - defined by the tag/release you have made
 * `php-maj/min` - for example `8.3` for PHP 8.3.*
-* `compiler` - usually something like `vc16` - this should match
-  the `PHP_COMPILER_ID`
-* `-nts` - optional - non-thread safe. If omitted, thread-safe mode (ZTS) is
-  assumed.
-* `-arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"`.
+* `compiler` - usually something like `vc6`, `vs16` - fetch from
+  'PHP Extension Build' flags in `php -i`
+* `ts|nts` - Thread-safe or non-thread safe.
+* `arch` - for example `x86_64`.
+  * Windows: `Architecture` from `php -i`
+  * non-Windows: check `PHP_INT_SIZE` - 4 for 32-bit, 8 for 64-bit.
 
 #### Contents of the Windows ZIP
 
 The pre-built ZIP should contain at minimum a DLL named in the same way as the
 ZIP itself, for example
-`php_{extension-name}-{tag}-{php-maj/min}-{compiler}{"-nts"}?{-arch}.dll`.
+`php_{extension-name}-{tag}-{php-maj/min}-{ts|nts}-{compiler}-{arch}.dll`.
 The `.dll` will be moved into the PHP
 extensions path, and renamed, e.g.
 to `C:\path\to\php\ext\php_{extension-name}.dll`. The ZIP file may include
@@ -412,10 +414,10 @@ Determine the expected name for the Windows ZIP:
 Because arch is optional, we have to try therefore, the following file formats,
 in order:
 
-* `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.zip`
+* `php_{extension-name}-{tag}-{php-maj/min}-{ts|nts}-{compiler}-{arch}.zip`
     * example for a non-TS request for xdebug `3.3.0alpha3` on PHP 8.3 on
       an `x86_64`
-      machine: `php_xdebug-3.3.0alpha3-8.3-vs16-nts-x86_64.zip`
+      machine: `php_xdebug-3.3.0alpha3-8.3-nts-vs16-x86_64.zip`
 
 If the release is found:
 
@@ -424,7 +426,7 @@ If the release is found:
   fetching/listing assets, so we would need to build this.
 * Extract the ZIP to a temporary location
 * Move the contents of the ZIP according to these rules:
-    * Move `php_{extension-name}-{tag}-{php-maj/min}-{compiler}{-nts}-{platform}.dll`
+    * Move `php_{extension-name}-{tag}-{php-maj/min}-{ts|nts}-{compiler}-{arch}.dll`
       to `$PHP_PATH\ext\php_{extension-name}.dll`
     * Move `php_{extension-name}.pdb`
       to `$PHP_PATH\ext\php_{extension-name}.pdb` (if it exists)
