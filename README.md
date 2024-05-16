@@ -306,8 +306,9 @@ The descriptions of these items:
 * `compiler` - usually something like `vc6`, `vs16` - fetch from
   'PHP Extension Build' flags in `php -i`
 * `ts|nts` - Thread-safe or non-thread safe.
-* `arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"` or
-  `Architecture` from `php -i` (only on Windows)
+* `arch` - for example `x86_64`.
+  * Windows: `Architecture` from `php -i`
+  * non-Windows: check `PHP_INT_SIZE` - 4 for 32-bit, 8 for 64-bit.
 
 #### Contents of the Windows ZIP
 
