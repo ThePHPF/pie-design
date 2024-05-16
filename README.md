@@ -303,11 +303,11 @@ The descriptions of these items:
 * `extension-name` the name of the extension, e.g. `xdebug`
 * `tag` for example `3.3.0alpha3` - defined by the tag/release you have made
 * `php-maj/min` - for example `8.3` for PHP 8.3.*
-* `compiler` - usually something like `vc6`, `vs16` - - fetch from
+* `compiler` - usually something like `vc6`, `vs16` - fetch from
   'PHP Extension Build' flags in `php -i`
 * `ts|nts` - Thread-safe or non-thread safe.
 * `arch` - for example `x86_64`, fetch using `php -r "echo php_uname('m');"` or
-  `Architecture` from `php -i`
+  `Architecture` from `php -i` (only on Windows)
 
 #### Contents of the Windows ZIP
 
