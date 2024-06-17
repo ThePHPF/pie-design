@@ -105,14 +105,30 @@ inclusion and improvements:
 
 ### CLI commands
 
-#### `install {ext-name}{?:version-constraint}{?@dev-branch-name}`
+#### `install {ext-name}{?:version-constraint}{?@stability}`
 
 Installs the requested package. The package may be requested with or
 without `ext-` prefix. `pie install ext-xdebug`
 and `pie install xdebug` would be equivalent.
 
 If `version-constraint` is given, try to install that version if it matches the
-allowed versions.
+allowed versions. Version constraints are resolved using the same format as
+Composer, along with the minimum stability.
+
+ * `^1.0` will install the latest stable and backwards-compatible version with
+   `1.0.0` and above, according to semantic versioning. [See Composer docs for details](https://getcomposer.org/doc/articles/versions.md#caret-version-range-).
+ * `^2.3@beta` will install the latest beta and backwards-compatible version
+   with `2.3.0` and above (for example, `2.3.0-beta.3`).
+ * `dev-main` will install the latest commit on the `main` branch at the time
+   of command execution. This would not work with Windows, as there is no
+   release with Windows binaries.
+ * `dev-main#07f454ad797c30651be8356466685b15331f72ff` will install the specific
+   commit denoted by the commit sha after `#`, in this case the commit
+   `07f454ad797c30651be8356466685b15331f72ff` would be installed. This would
+   not work with Windows, as there is no release with Windows binaries.
+
+If no `version-constraint` is given, try to install any compatible latest and
+stable version.
 
 On Windows this downloads the correct DLL (attached as file to the release tag),
 if available. Otherwise, it will
@@ -131,17 +147,9 @@ If the extension has a composer.json defined priority, the `20` in the ini file
 filename will be replaced by that
 priority.
 
-If `@dev-branch-name` is given, try to install from the branch called
-"branch-name", for example use `@dev-master` to
-compile from your master branch. As branches would usually not have binaries,
-this would not work for Windows.
-
-You can't use both a `version-constraint` and `@dev-branch-name` at the same
-time.
-
 Each step should run with as few privileges as possible.
 
-#### `build {ext-name}{?:version-constraint}{?@dev-branch-name}`
+#### `build {ext-name}{?:version-constraint}{?@stability}`
 
 Same behaviour as install, but only compiles (or downloads if it's Windows).
 
@@ -150,7 +158,7 @@ Same behaviour as install, but only compiles (or downloads if it's Windows).
 Shows the release notes of the version it was going to install, or from the
 specific version, if given.
 
-#### `download {ext-name}{?:version-constraint}{?@dev-branch-name}`
+#### `download {ext-name}{?:version-constraint}{?@stability}`
 
 Same behaviour as build, but puts the files in a local directory for manual
 building and installation.
@@ -169,7 +177,7 @@ Shows all installed extensions available with the PHP version in the path,
 including their versions. This includes
 *all* loaded PHP extensions, and not just PIE-sourced ones.
 
-#### `upgrade {?{ext-name}{?:version-constraint}{?@dev-branch-name}}`
+#### `upgrade {?{ext-name}{?:version-constraint}{?@stability}}`
 
 Attempts to upgrade all installed versions to the latest available ones on
 GitHub (unless their major version has
