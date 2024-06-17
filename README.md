@@ -202,10 +202,9 @@ Allows installation of extensions with PHP versions that are not in the path
 
 #### `--{option}{?=value}`
 
-All options specified in the `config` section of the composer.json file can also
-be given, including a value if they
-take them. For example, for Xdebug you could
-run `pie install xdebug --without-xdebug-compression`.
+All options specified in the `configure-options` section of the composer.json
+file can be given, including a value if they take them. For example, for Xdebug
+you could run `pie install xdebug --without-xdebug-compression`.
 
 ## Extension maintainer: register a PIE package
 
@@ -243,6 +242,7 @@ ONLY AN EXAMPLE, and is not necessarily the real `composer.json` in Xdebug.
             },
             {
                 "name": "some-path-to-something",
+                "needs-value": true,
                 "description": "This should be the path to the thing that is needed."
             }
         ]
