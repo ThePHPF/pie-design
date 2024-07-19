@@ -7,7 +7,7 @@
     "properties": {
         "php-ext": {
             "type": "object",
-            "required": [],
+            "description": "Settings for PHP extension packages.",
             "properties": {
                 "extension-name": {
                     "type": "string",
