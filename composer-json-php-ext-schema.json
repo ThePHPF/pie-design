@@ -44,7 +44,7 @@
                             "needs-value": {
                                 "type": "boolean",
                                 "description": "If this is set to true, the flag needs a value (e.g. --with-somelib=<path>), otherwise it is a flag without a value (e.g. --enable-some-feature).",
-                                "example": "with-somelib",
+                                "example": false,
                                 "default": false
                             },
                             "description": {
