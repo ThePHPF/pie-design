@@ -228,7 +228,7 @@ ONLY AN EXAMPLE, and is not necessarily the real `composer.json` in Xdebug.
         "ext-xdebug": "*"
     },
     "php-ext": {
-        "name": "ext-xdebug",
+        "extension-name": "ext-xdebug",
         "priority": 80,
         "support-zts": false,
         "configure-options": [
