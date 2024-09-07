@@ -105,11 +105,15 @@ inclusion and improvements:
 
 ### CLI commands
 
-#### `install {ext-name}{?:version-constraint}{?@stability}`
+#### `install {package}{?:version-constraint}{?@stability}`
 
-Installs the requested package. The package may be requested with or
-without `ext-` prefix. `pie install ext-xdebug`
-and `pie install xdebug` would be equivalent.
+Installs the requested package. The `{package}` is a Composer package name, and
+*not* the extension name. For example, `pie install xdebug/xdebug` is a valid
+request. At the time of writing, PIE-compatible packages are listed on
+[https://packagist.org/extensions](https://packagist.org/extensions). Note that
+previous iterations of this design draft suggested using the extension name as
+the `pie install` parameter, but after [some discussion](https://github.com/ThePHPF/pie-design/issues/8)
+it was agreed to use the Composer package name instead.
 
 If `version-constraint` is given, try to install that version if it matches the
 allowed versions. Version constraints are resolved using the same format as
@@ -149,7 +153,7 @@ priority.
 
 Each step should run with as few privileges as possible.
 
-#### `build {ext-name}{?:version-constraint}{?@stability}`
+#### `build {package}{?:version-constraint}{?@stability}`
 
 Same behaviour as install, but only compiles (or downloads if it's Windows).
 
@@ -158,7 +162,7 @@ Same behaviour as install, but only compiles (or downloads if it's Windows).
 Shows the release notes of the version it was going to install, or from the
 specific version, if given.
 
-#### `download {ext-name}{?:version-constraint}{?@stability}`
+#### `download {package}{?:version-constraint}{?@stability}`
 
 Same behaviour as build, but puts the files in a local directory for manual
 building and installation.
@@ -177,7 +181,7 @@ Shows all installed extensions available with the PHP version in the path,
 including their versions. This includes
 *all* loaded PHP extensions, and not just PIE-sourced ones.
 
-#### `upgrade {?{ext-name}{?:version-constraint}{?@stability}}`
+#### `upgrade {?{package}{?:version-constraint}{?@stability}}`
 
 Attempts to upgrade all installed versions to the latest available ones on
 GitHub (unless their major version has
@@ -204,7 +208,7 @@ Allows installation of extensions with PHP versions that are not in the path
 
 All options specified in the `configure-options` section of the composer.json
 file can be given, including a value if they take them. For example, for Xdebug
-you could run `pie install xdebug --without-xdebug-compression`.
+you could run `pie install xdebug/xdebug --without-xdebug-compression`.
 
 ## Extension maintainer: register a PIE package
 
@@ -228,7 +232,7 @@ ONLY AN EXAMPLE, and is not necessarily the real `composer.json` in Xdebug.
         "ext-xdebug": "*"
     },
     "php-ext": {
-        "name": "ext-xdebug",
+        "extension-name": "ext-xdebug",
         "priority": 80,
         "support-zts": false,
         "configure-options": [
@@ -339,7 +343,7 @@ additional resources, such as:
 Run:
 
 ```bash
-$ pie install ext-xdebug
+$ pie install xdebug/xdebug
 ```
 
 PIE uses `composer/composer` library to help resolve dependencies
@@ -350,7 +354,7 @@ sequenceDiagram
     participant composer as composer library
     participant packagist as packagist.org
 
-    pie ->> composer : request to install "ext-xdebug"
+    pie ->> composer : request to install "xdebug/xdebug"
     composer ->> packagist : read metadata to resolve dependencies
     packagist ->> composer : metadata
     composer ->> pie : release information
@@ -385,11 +389,11 @@ be specified as part of the `build` or `install` commands. Here are some
 examples:
 
 ```bash
-$ pie install xdebug
-$ pie install xdebug --enable-xdebug-dev
-$ pie install xdebug --enable-xdebug-dev --without-xdebug-compression
-$ pie install xdebug --some-path-to-something=/usr/local/lib/something
-$ pie install xdebug --not-a-defined-configuration-option # this would fail
+$ pie install xdebug/xdebug
+$ pie install xdebug/xdebug --enable-xdebug-dev
+$ pie install xdebug/xdebug --enable-xdebug-dev --without-xdebug-compression
+$ pie install xdebug/xdebug --some-path-to-something=/usr/local/lib/something
+$ pie install xdebug/xdebug --not-a-defined-configuration-option # this would fail
 ```
 
 ### Windows installation
@@ -401,8 +405,8 @@ Example:
 
 ```powershell
 # Assuming C:\usr\php8.3.4\php.exe is in the $PATH
-$ pie install xdebug                                     # uses C:\usr\php8.3.4\php.exe (i.e. the version that invoked PIE)
-$ pie install xdebug --with-php-path="C:\usr\php7.4.33"  # uses C:\usr\php7.4.33\php.exe
+$ pie install xdebug/xdebug                                     # uses C:\usr\php8.3.4\php.exe (i.e. the version that invoked PIE)
+$ pie install xdebug/xdebug --with-php-path="C:\usr\php7.4.33"  # uses C:\usr\php7.4.33\php.exe
 ```
 
 In the follow examples, the `$PHP_PATH` is whichever the path is given above,
