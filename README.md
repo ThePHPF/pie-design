@@ -372,7 +372,7 @@ sequenceDiagram
   enabled, but the extension specifies `"support-zts": false` in
   its `composer.json` manifest, the installation will
   be halted with an error explanation. Converseley, if using a PHP without ZTS,
-  but the extension specifies `"supports-nts": false`, the then install will
+  but the extension specifies `"supports-nts": false`, the installation will
   similarly fail.
 
 Once we have the release information, for Linux:
