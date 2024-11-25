@@ -40,6 +40,24 @@
                     "example": "my-extension-source",
                     "default": null
                 },
+                "os-families": {
+                    "type": "array",
+                    "description": "An array of OS families to mark as compatible with the extension.",
+                    "items": {
+                        "type": "string",
+                        "enum": ["Windows", "BSD", "Darwin", "Solaris", "Linux", "Unknown"],
+                        "description": "The name of the OS family to mark as compatible."
+                    }
+                },
+                "os-families-exclude": {
+                    "type": "array",
+                    "description": "An array of OS families to mark as incompatible with the extension.",
+                    "items": {
+                        "type": "string",
+                        "enum": ["Windows", "BSD", "Darwin", "Solaris", "Linux", "Unknown"],
+                        "description": "The name of the OS family to exclude."
+                    }
+                },
                 "configure-options": {
                     "type": "array",
                     "description": "These configure options make up the flags that can be passed to ./configure when installing the extension.",
@@ -67,7 +85,14 @@
                         }
                     }
                 }
-            }
+            },
+            "allOf": [
+                {
+                    "not": {
+                        "required": ["os-families", "os-families-exclude"]
+                    }
+                }
+            ]
         }
     }
 }
