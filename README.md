@@ -281,7 +281,7 @@ for the release
       the `ext-` prefix, and tooling such as PIE will be expected to normalise
       this appropriately.
     * Proposed JSON schema for this is
-      in [composer-json-php-ext-schema.json](./composer-json-php-ext-schema.json)
+      in [composer-json-php-ext-schema.json](https://github.com/php/pie/blob/main/resources/composer-json-php-ext-schema.json)
     * It is assumed that packages all support Zend Thread Safe mode (ZTS). If a
       package does **not** support ZTS mode,
       the key `"support-zts": false` should be set in `php-ext` section, but you
